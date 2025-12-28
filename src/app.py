@@ -12,8 +12,9 @@ from core.config_builder import hydra_to_mmcv
 from utils.utils import PALETTE
 
 MODELS = {
-    'Oriented RCNN': {'config': 'src/configs/train_oriented_rcnn.yaml', 'checkpoint': 'logs/oriented_rcnn_aircraft/latest.pth'},
-    'R3Det': {'config': 'src/configs/train_r3det.yaml', 'checkpoint': 'logs/r3det_aircraft/epoch_60.pth'},
+    'Oriented RCNN': {'config': 'src/configs/train_oriented_rcnn.yaml', 'checkpoint': 'checkpoints/finetuned/oriented_rccn_latest.pth'},
+    'R3Det': {'config': 'src/configs/train_r3det.yaml', 'checkpoint': 'checkpoints/finetuned/r3det_latest.pth'},
+    'RoITransformer': {'config': 'src/configs/train_roitrans.yaml', 'checkpoint': 'checkpoints/finetuned/roitrans_latest.pth'},
 }
 
 EXAMPLE_INPUTS = ['src/examples/01_input.jpg', 'src/examples/02_input.jpg', 'src/examples/03_input.jpg']
