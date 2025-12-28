@@ -1,6 +1,6 @@
 work_dir: ./logs/roitrans_aircraft
 experiment: train_roitrans
-load_from: ./checkpoints/roi_trans_r50_fpn_1x_dota_le90-d1f0b77a.pth
+load_from: ./checkpoints/pretrained/roi_trans_r50_fpn_1x_dota_le90-d1f0b77a.pth
 angle_version: le90
 log_level: INFO
 

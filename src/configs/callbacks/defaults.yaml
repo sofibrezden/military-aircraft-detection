@@ -1,0 +1,8 @@
+custom_hooks:
+  - type: EarlyStoppingHook
+    monitor: mAP
+    rule: greater
+    min_delta: 0.01
+    patience: 5
+    strict: False
+    check_finite: True

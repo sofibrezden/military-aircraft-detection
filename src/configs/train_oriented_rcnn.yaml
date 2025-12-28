@@ -1,6 +1,6 @@
 work_dir: ./logs/oriented_rcnn_aircraft
 experiment: train_oriented_rcnn
-load_from: ./checkpoints/oriented_rcnn_r50_fpn_1x_dota_le90-6d2b2ce0.pth
+load_from: ./checkpoints/pretrained/oriented_rcnn_r50_fpn_1x_dota_le90-6d2b2ce0.pth
 angle_version: le90
 log_level: INFO
 

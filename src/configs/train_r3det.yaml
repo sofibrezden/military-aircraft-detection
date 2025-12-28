@@ -1,6 +1,6 @@
 work_dir: ./logs/r3det_aircraft
 experiment: train_r3det
-load_from: ./checkpoints/r3det_tiny_r50_fpn_1x_dota_oc-c98a616c.pth
+load_from: ./checkpoints/pretrained/r3det_tiny_r50_fpn_1x_dota_oc-c98a616c.pth
 angle_version: oc
 log_level: INFO
 
