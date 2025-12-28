@@ -1,0 +1,18 @@
+work_dir: ./logs/roitrans_aircraft
+experiment: train_roitrans
+load_from: ./checkpoints/roi_trans_r50_fpn_1x_dota_le90-d1f0b77a.pth
+angle_version: le90
+log_level: INFO
+
+dataset_type: DOTAAircraftDataset
+data_root: ./data/DOTA_annotations
+
+defaults:
+  - model: roi_transformer
+  - dataset: dataset
+  - augmentations: default_augs
+  - optimizer: sgd
+  - callbacks: defaults
+  - logger: tensorboard
+  - trainer: default
+  - _self_

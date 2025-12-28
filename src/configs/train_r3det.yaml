@@ -1,0 +1,18 @@
+work_dir: ./logs/r3det_aircraft
+experiment: train_r3det
+load_from: ./checkpoints/r3det_tiny_r50_fpn_1x_dota_oc-c98a616c.pth
+angle_version: oc
+log_level: INFO
+
+dataset_type: DOTAAircraftDataset
+data_root: ./data/DOTA_annotations
+
+defaults:
+  - model: r3det
+  - dataset: dataset
+  - augmentations: default_augs
+  - optimizer: sgd
+  - callbacks: defaults
+  - logger: tensorboard
+  - trainer: default
+  - _self_

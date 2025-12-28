@@ -1,0 +1,15 @@
+seed: 42
+gpu_ids: [0]
+device: cuda
+
+runner:
+  type: EpochBasedRunner
+  max_epochs: 60
+
+evaluation:
+  interval: 1
+  metric: mAP
+
+checkpoint_config:
+  interval: 1
+  max_keep_ckpts: 1

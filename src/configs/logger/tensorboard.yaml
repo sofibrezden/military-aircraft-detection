@@ -1,0 +1,5 @@
+log_config:
+  interval: 10
+  hooks:
+    - type: TextLoggerHook
+    - type: TensorboardLoggerHook

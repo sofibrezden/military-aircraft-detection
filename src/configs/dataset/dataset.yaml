@@ -1,0 +1,27 @@
+data:
+  samples_per_gpu: 2
+  workers_per_gpu: 2
+
+  train:
+    type: DOTAAircraftDataset
+    data_root: ./data/DOTA_annotations
+    ann_file: train
+    img_prefix: images
+    version: le90
+    pipeline: ${augmentations.train_augs}
+
+  val:
+    type: DOTAAircraftDataset
+    data_root: ./data/DOTA_annotations
+    ann_file: val
+    img_prefix: images
+    version: le90
+    pipeline: ${augmentations.val_augs}
+
+  test:
+    type: DOTAAircraftDataset
+    data_root: ./data/DOTA_annotations
+    ann_file: val
+    img_prefix: images
+    version: le90
+    pipeline: ${augmentations.test_augs}

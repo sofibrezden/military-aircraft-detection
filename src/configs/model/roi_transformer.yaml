@@ -1,0 +1,188 @@
+type: RoITransformer
+
+backbone:
+  type: ResNet
+  depth: 50
+  frozen_stages: 1
+  init_cfg:
+    type: Pretrained
+    checkpoint: torchvision://resnet50
+  norm_cfg:
+    type: BN
+    requires_grad: true
+  norm_eval: true
+  num_stages: 4
+  out_indices: [0, 1, 2, 3]
+  style: pytorch
+  zero_init_residual: false
+neck:
+  type: FPN
+  in_channels: [256, 512, 1024, 2048]
+  out_channels: 256
+  num_outs: 5
+rpn_head:
+  type: RotatedRPNHead
+  in_channels: 256
+  feat_channels: 256
+  anchor_generator:
+    type: AnchorGenerator
+    scales: [8]
+    ratios: [0.5, 1.0, 2.0]
+    strides: [8, 16, 32, 64, 128]
+  bbox_coder:
+    type: DeltaXYWHBBoxCoder
+    target_means: [0.0, 0.0, 0.0, 0.0]
+    target_stds: [1.0, 1.0, 1.0, 1.0]
+  loss_cls:
+    type: CrossEntropyLoss
+    use_sigmoid: true
+    loss_weight: 1.0
+  loss_bbox:
+    type: SmoothL1Loss
+    beta: 0.11
+    loss_weight: 1.0
+roi_head:
+  type: RoITransRoIHead
+  version: le90
+  num_stages: 2
+  stage_loss_weights: [1, 1]
+  bbox_roi_extractor:
+    - type: SingleRoIExtractor
+      roi_layer:
+        type: RoIAlign
+        output_size: 7
+        sampling_ratio: 0
+      out_channels: 256
+      featmap_strides: [4, 8, 16, 32]
+    - type: RotatedSingleRoIExtractor
+      roi_layer:
+        type: RoIAlignRotated
+        output_size: 7
+        sample_num: 2
+        clockwise: true
+      out_channels: 256
+      featmap_strides: [4, 8, 16, 32]
+  bbox_head:
+    - type: RotatedShared2FCBBoxHead
+      in_channels: 256
+      fc_out_channels: 1024
+      roi_feat_size: 7
+      num_classes: 20
+      bbox_coder:
+        type: DeltaXYWHAHBBoxCoder
+        angle_range: le90
+        norm_factor: 2
+        edge_swap: true
+        target_means: [0.0, 0.0, 0.0, 0.0, 0.0]
+        target_stds: [0.1, 0.1, 0.2, 0.2, 0.1]
+      reg_class_agnostic: true
+      loss_cls:
+        type: CrossEntropyLoss
+        use_sigmoid: false
+        loss_weight: 1.0
+      loss_bbox:
+        type: SmoothL1Loss
+        beta: 1.0
+        loss_weight: 1.0
+    - type: RotatedShared2FCBBoxHead
+      in_channels: 256
+      fc_out_channels: 1024
+      roi_feat_size: 7
+      num_classes: 20
+      bbox_coder:
+        type: DeltaXYWHAOBBoxCoder
+        angle_range: le90
+        norm_factor: null
+        edge_swap: true
+        proj_xy: true
+        target_means: [0.0, 0.0, 0.0, 0.0, 0.0]
+        target_stds: [0.05, 0.05, 0.1, 0.1, 0.5]
+      reg_class_agnostic: false
+      loss_cls:
+        type: CrossEntropyLoss
+        use_sigmoid: false
+        loss_weight: 1.0
+      loss_bbox:
+        type: SmoothL1Loss
+        beta: 1.0
+        loss_weight: 1.0
+
+# Training configuration
+train_cfg:
+  rpn:
+    assigner:
+      type: MaxIoUAssigner
+      pos_iou_thr: 0.7
+      neg_iou_thr: 0.3
+      min_pos_iou: 0.3
+      match_low_quality: true
+      ignore_iof_thr: -1
+    sampler:
+      type: RandomSampler
+      num: 256
+      pos_fraction: 0.5
+      neg_pos_ub: -1
+      add_gt_as_proposals: false
+    allowed_border: 0
+    pos_weight: -1
+    debug: false
+  rpn_proposal:
+    nms_pre: 2000
+    max_per_img: 2000
+    nms:
+      type: nms
+      iou_threshold: 0.7
+    min_bbox_size: 0
+  rcnn:
+    - assigner:
+        type: MaxIoUAssigner
+        pos_iou_thr: 0.5
+        neg_iou_thr: 0.5
+        min_pos_iou: 0.5
+        match_low_quality: false
+        ignore_iof_thr: -1
+        iou_calculator:
+          type: BboxOverlaps2D
+      sampler:
+        type: RandomSampler
+        num: 512
+        pos_fraction: 0.25
+        neg_pos_ub: -1
+        add_gt_as_proposals: true
+      pos_weight: -1
+      debug: false
+
+    - assigner:
+        type: MaxIoUAssigner
+        pos_iou_thr: 0.5
+        neg_iou_thr: 0.5
+        min_pos_iou: 0.5
+        match_low_quality: false
+        ignore_iof_thr: -1
+        iou_calculator:
+          type: RBboxOverlaps2D
+      sampler:
+        type: RRandomSampler
+        num: 512
+        pos_fraction: 0.25
+        neg_pos_ub: -1
+        add_gt_as_proposals: true
+      pos_weight: -1
+      debug: false
+
+test_cfg:
+  rpn:
+    nms_pre: 2000
+    max_per_img: 2000
+    nms:
+      type: nms
+      iou_threshold: 0.7
+    min_bbox_size: 0
+  rcnn:
+    nms_pre: 2000
+    min_bbox_size: 0
+    score_thr: 0.05
+    nms:
+      type: le90
+      iou_thr: 0.1
+    max_per_img: 2000

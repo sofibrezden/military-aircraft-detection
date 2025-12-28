@@ -1,0 +1,64 @@
+train_augs:
+  - type: LoadImageFromFile
+  - type: LoadAnnotations
+    with_bbox: true
+  - type: RResize
+    img_scale: ${img_scale:1024,1024}
+    ratio_range: [0.85, 1.15]
+  - type: RRandomFlip
+    flip_ratio: [0.25, 0.25, 0.25]
+    direction: [horizontal, vertical, diagonal]
+    version: le90
+  - type: PhotoMetricDistortion
+    brightness_delta: 32
+    contrast_range: [0.95, 1.05]
+    saturation_range: [0.95, 1.05]
+    hue_delta: 5
+  - type: Normalize
+    mean: [123.675, 116.28, 103.53]
+    std: [58.395, 57.12, 57.375]
+    to_rgb: true
+  - type: Pad
+    size_divisor: 32
+  - type: DefaultFormatBundle
+  - type: Collect
+    keys:
+      - img
+      - gt_bboxes
+      - gt_labels
+
+val_augs:
+  - type: LoadImageFromFile
+  - type: MultiScaleFlipAug
+    img_scale: ${img_scale:1024,1024}
+    flip: false
+    transforms:
+      - type: RResize
+      - type: Normalize
+        mean: [123.675, 116.28, 103.53]
+        std: [58.395, 57.12, 57.375]
+        to_rgb: true
+      - type: Pad
+        size_divisor: 32
+      - type: DefaultFormatBundle
+      - type: Collect
+        keys:
+          - img
+
+test_augs:
+  - type: LoadImageFromFile
+  - type: MultiScaleFlipAug
+    img_scale: ${img_scale:1024,1024}
+    flip: false
+    transforms:
+      - type: RResize
+      - type: Normalize
+        mean: [123.675, 116.28, 103.53]
+        std: [58.395, 57.12, 57.375]
+        to_rgb: true
+      - type: Pad
+        size_divisor: 32
+      - type: DefaultFormatBundle
+      - type: Collect
+        keys:
+          - img
