@@ -1,3 +1,5 @@
+import defusedxml.ElementTree as ET
+import numpy as np
 from omegaconf import OmegaConf
 
 # palette for 20 classes
@@ -50,3 +52,32 @@ CLASSES = (
 def register_custom_resolvers() -> None:
     """Register custom resolvers for OmegaConf."""
     OmegaConf.register_new_resolver('img_scale', lambda w, h=None: (w, w) if h is None else (w, h), replace=True)
+
+def parse_xml(xml_path: str) -> list[np.ndarray]:
+    """Parse XML annotations and return polygons."""
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    polygons = []
+
+    for obj in root.findall("object"):
+
+        robndbox = obj.find("robndbox")
+
+        pts = [
+            [float(robndbox.find("x_left_top").text),
+             float(robndbox.find("y_left_top").text)],
+
+            [float(robndbox.find("x_right_top").text),
+             float(robndbox.find("y_right_top").text)],
+
+            [float(robndbox.find("x_right_bottom").text),
+             float(robndbox.find("y_right_bottom").text)],
+
+            [float(robndbox.find("x_left_bottom").text),
+             float(robndbox.find("y_left_bottom").text)]
+        ]
+
+        polygons.append(np.array(pts, dtype=np.int32))
+
+    return polygons
