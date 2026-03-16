@@ -20,15 +20,17 @@ dependencies = [
     "defusedxml>=0.7.1",
     "tqdm>=4.67.1",
     "mmrotate==0.3.4",
-    "gradio>=6.2.0",
+    "gradio>4.4.0",
     "loguru>=0.7.0",
     "clip",
     "click>=8.1.0",
-    "diffusers>=0.30.0,<0.31.0",
+    "diffusers==0.27.2",
     "transformers>=4.30.0,<4.35.0",
     "peft>=0.6.0,<0.7.0",
     "accelerate>=0.23.0,<0.24.0",
     "segment-anything>=1.0",
+    "huggingface-hub==0.20.3",
+    "ipykernel>=7.2.0",
 ]
 
 [tool.uv]
